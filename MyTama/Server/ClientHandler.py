@@ -44,7 +44,7 @@ class ClientHandler(Thread):
                 pack.update({"nick": self.nick_clie})
                 new_pack = pickle.dumps(pack)
                 type = pack.get("type")
-                if type == "text":
+                if type == "nickname":
                     self.send_mes_all(new_pack)
                 elif type == "file":
                     self.send_mes_not_all(new_pack)

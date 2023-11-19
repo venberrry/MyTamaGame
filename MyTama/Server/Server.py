@@ -2,6 +2,7 @@ import socket
 from servcommon.ServUtils import Utils
 from threading import Thread
 import pickle
+import multiprocessing
 from ClientHandler import ClientHandler
 
 class Serv:
@@ -10,6 +11,7 @@ class Serv:
         self.address = address
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clies = []
+        self.rooms = {}
 
     def prep(self):
         self.sock.bind(self.address)

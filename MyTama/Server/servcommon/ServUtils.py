@@ -17,7 +17,6 @@ class Utils:
                 # res = self.define_pack(data)
                 # print(f"Got {data}")
             except Exception as error:
-                print("ZASHELLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
                 for cli in self.clies:
                     if cli.sock != self.sock:
                         self.clies.remove(cli)

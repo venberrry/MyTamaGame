@@ -1,137 +1,97 @@
-import socket
-from common.ClientUtils import Utils
+import sys
+import time
+from PyQt6 import uic
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QApplication, QLineEdit, QMainWindow, QStackedWidget, QPushButton, QToolButton
+from ClientElevation import ClientCommunication
 from threading import Thread
-import pickle
-from datetime import datetime
 
-class RecvFromServer(Thread):
-    def __init__(self, sock, addr, buff):
-        super().__init__(daemon=True)
-        self.sock = sock
-        self.addr = addr
-        self.buff = buff
+class MyWindow(QMainWindow):
+    signal = pyqtSignal(str)
 
-    def run(self):
+    def __init__(self):
+        super().__init__()
+        self.setFixedSize(400, 500)
+        self.setStyleSheet("background-color: #2b2b2b;")
+        # Создаем стек с окнами
+        self.statusBar().setSizeGripEnabled(False)
+        self.stacked_widget = QStackedWidget(self)
+        self.setCentralWidget(self.stacked_widget)
+
+        self.ui_widget_menu = uic.loadUi('tama_guis/menu.ui')
+        self.stacked_widget.addWidget(self.ui_widget_menu)
+        self.ui_widget_reg = uic.loadUi('tama_guis/reg.ui')
+        self.stacked_widget.addWidget(self.ui_widget_reg)
+        self.ui_widget_error = uic.loadUi('tama_guis/error.ui')
+        self.stacked_widget.addWidget(self.ui_widget_error)
+        self.ui_widget_load = uic.loadUi('tama_guis/loading.ui')
+        self.stacked_widget.addWidget(self.ui_widget_load)
+
+        self.statusBar().setSizeGripEnabled(False)
+
+        # create room
+        createRoomBtn = self.findChild(QPushButton, 'createRoomBTN')
+        createRoomBtn.clicked.connect(self.show_widget_reg)
+        self.ui_widget_reg.sendNickBTN.clicked.connect(self.acceptNick)
+
+        # error widget
+        self.ui_widget_error.backToMenuBTN.clicked.connect(self.show_menu)
+
+        # Настройка ввода количества символов для ника юзера
+        self.ui_widget_reg.nickLineEdit.setMaxLength(10)
+        self.ui_widget_reg.nickLineEdit.textChanged.connect(self.on_text_changed)
+
+    def connect_to_server(self):
         try:
-            while True:
-                    ut = Utils(self.buff)
-                    pickle_pack = ut.recv_full_pickle(self.sock)
-                    pack = pickle.loads(pickle_pack)
-                    type = pack.get("type")
-                    if type == "text":
-                        print("[", datetime.now().hour, ':',
-                               datetime.now().minute, ':',
-                               datetime.now().second,'] (', pack.get("nick"), ")",
-                               ':', pack.get("data"), "\n")
-                    elif type == "file":
-                        info = pack.get("data")
-                        print(info)
-                        with open(pack.get("optional"), 'wb') as file:
-                            file.write(info + "Proverka".encode("UTF-8"))
-                        print("You got file named:", pack.get("optional"))
-                    elif type == "welcome":
-                        pass
-        except Exception as err:
-            print("DISCONECT1")
-            print(f"При получении данных возникла ошибка: {err}")
-            print("DISCONECT1")
+            client = ClientCommunication(4096, ('127.0.0.1', 8007))
+            client.connect(self.clientNickname)
+            print('передал', self.clientNickname)
+            self.stacked_widget.setCurrentWidget(self.ui_widget_load)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
+
+    @pyqtSlot()
+    def show_menu(self):
+        self.stacked_widget.setCurrentWidget(self.ui_widget_menu)
+
+    @pyqtSlot()
+    def show_widget_reg(self):
+        self.stacked_widget.setCurrentWidget(self.ui_widget_reg)
+
+    @pyqtSlot()
+    def acceptNick(self):
+        self.clientNickname: str = self.ui_widget_reg.nickLineEdit.text()
+        print(self.clientNickname)
+        print('tyt1')
+        self.ui_widget_reg.nickLineEdit.clear()
+        print('tyt2')
+        print('tyt3')
+        self.connect_to_server()
+        print('tyt4')
+
+    def on_text_changed(self, text):
+        print('символ')
+        max_length = 10
+        if len(text) > max_length:
+            self.sender().setText(text[:max_length])
+
+    # def conn_to_server(self):
+    #     clientNickname = self.ui_widget_reg.nickLineEdit.text()
+    #     print(clientNickname)
+    #     print('tyt2')
+    #     # Очищаем поле
+    #     self.ui_widget_reg.nickLineEdit.clear()
+    #     time.sleep(0.25)
+    #     self.actual_connect_to_server()
+    #     print('tyt3')
 
 
-class Clie:
-    def __init__(self, buff, address):
-        self.buff = buff
-        self.address = address
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(('localhost', 0))
-
-    def get_client_nickname(self):
-        print("Введите свой ник:")
-        self.nickname = str(input())
-
-    def client_send_text(self, temp_type):
-        try:
-            data_new = dict()
-            if temp_type == "text":
-                message = ''
-                try:
-                    message = input("Ввод текста: ")
-                    if message == "exit":
-                        self.sock.close()
-                except Exception as something_bad:
-                    print("Кажется клиент отвалился:", something_bad)
-                    self.sock.close()
-
-                data = {
-                    'type': temp_type,
-                    'data': message,
-                    'optional': ""
-                }
-                data_new = pickle.dumps(data)
-
-            if temp_type == "file":
-                message = ''
-                info = bytearray()
-                try:
-                    message = str(input("Ввод имя файла:"))
-                    print(message)
-                    if message == "exit":
-                        self.sock.close()
-                        info = bytearray()
-                    with open(message, 'rb') as file:
-                        while lines := file.read():
-                            info.extend(lines)
-                except Exception as something_bad:
-                    print("Кажется клиент отвалился:", something_bad)
-                    self.sock.close()
-
-                data = {
-                    'type': temp_type,
-                    'data': info,
-                    'optional': message
-                }
-                data_new = pickle.dumps(data)
-
-            if temp_type == "welcome":
-                nick = ''
-                try:
-                    nick = input("Ввод ника: ")
-                    if nick == "exit":
-                        self.sock.close()
-                except Exception as something_bad:
-                    print("Кажется клиент отвалился:", something_bad)
-                    self.sock.close()
-
-                data = {
-                    'type': temp_type,
-                    'data': nick,
-                    'optional': nick
-                }
-                data_new = pickle.dumps(data)
-
-            return data_new
-        except Exception as err:
-            print("DISCONNECT2")
-
-    def connect(self):
-        try:
-            self.sock.connect(self.address)
-            recv_cycle = RecvFromServer(self.sock, self.address, self.buff)
-            recv_cycle.start()
-            while True:
-                try:
-                    temp_type = input("Что вы хотите передать? (text/file/welcome)\n")
-                    data = self.client_send_text(temp_type)
-                    self.sock.send(data + b'OK')
-                except KeyboardInterrupt:
-                    print("Вы отвалились: ")
-                    self.sock.close()
-        except Exception as err:
-            print("DISCONNECT3")
 
 
 if __name__ == '__main__':
-    cl1 = Clie(10, ('127.0.0.1', 8007))
-    print("created")
-    print("open cli conn")
-    cl1.connect()
-    print("conn is over")
+    app = QApplication([])
+    window = MyWindow()
+    window.show()
+    app.exec()
+
