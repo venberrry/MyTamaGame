@@ -30,26 +30,26 @@ class Utils:
                 if result[-2:] == b'OK':
                     break
 
-        # print('done')
-        return result
-
-
-    def recv_full_data(self, connection: socket):
-        result = bytearray()
-        while True:
-            try:
-                pickle_pack = connection.recv(self.buffer_size)
-                data = pickle.loads(pickle_pack)
-                print(f"Gooooot {data}")
-            except Exception as error:
-                print(f"При получении данных возникла ошибка: {error}")
-                return
-            else:
-                if not data:
-                    return
-                # проверка на окончание передачи, что были все пакеты переданы
-                result.extend(data)
-                if result[-2:] == b'OK':
-                    break
         print('done')
         return result
+
+
+    # def recv_full_data(self, connection: socket):
+    #     result = bytearray()
+    #     while True:
+    #         try:
+    #             pickle_pack = connection.recv(self.buffer_size)
+    #             data = pickle.loads(pickle_pack)
+    #             print(f"Gooooot {data}")
+    #         except Exception as error:
+    #             print(f"При получении данных возникла ошибка: {error}")
+    #             return
+    #         else:
+    #             if not data:
+    #                 return
+    #             # проверка на окончание передачи, что были все пакеты переданы
+    #             result.extend(data)
+    #             if result[-2:] == b'OK':
+    #                 break
+    #     print('done')
+    #     return result

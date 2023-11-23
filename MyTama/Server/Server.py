@@ -1,8 +1,10 @@
+import multiprocessing
 import socket
 from servcommon.ServUtils import Utils
 from threading import Thread
 import pickle
-import multiprocessing
+from multiprocessing import Process, Pipe
+import time
 from ClientHandler import ClientHandler
 
 class Serv:
@@ -11,7 +13,7 @@ class Serv:
         self.address = address
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clies = []
-        self.rooms = {}
+        self.tamagochi = None
 
     def prep(self):
         self.sock.bind(self.address)
@@ -19,11 +21,10 @@ class Serv:
 
     def connect(self):
         while True:
-            print(self.clies)
             conn, address = self.sock.accept()
             print(f"NEW CONNECT: {address}")
             clie_nickname = address[0]
-            clie = ClientHandler(conn, address, self.buff, clie_nickname, self.clies)
+            clie = ClientHandler(conn, address, self.buff, clie_nickname, self.clies, self.tamagochi)
             clie.start()
             self.clies.append(clie)
 

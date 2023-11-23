@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="white_cat_pref">
+    <file>white_cat.jpg</file>
+  </qresource>
+  <qresource prefix="black_cat_pref">
+    <file>black_cat.jpg</file>
+  </qresource>
+  <qresource prefix="dinozarv_pref">
+    <file>dinozavr.jpg</file>
+  </qresource>
+</RCC>
