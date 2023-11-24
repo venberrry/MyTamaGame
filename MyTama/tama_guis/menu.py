@@ -9,17 +9,17 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MenuWindow(object):
-    def setupUi(self, MenuWindow):
-        MenuWindow.setObjectName("MenuWindow")
-        MenuWindow.resize(400, 500)
+class Ui_MenuWindowGUI(object):
+    def setupUi(self, MenuWindowGUI):
+        MenuWindowGUI.setObjectName("MenuWindowGUI")
+        MenuWindowGUI.resize(400, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(MenuWindow.sizePolicy().hasHeightForWidth())
-        MenuWindow.setSizePolicy(sizePolicy)
-        MenuWindow.setMinimumSize(QtCore.QSize(400, 500))
-        MenuWindow.setMaximumSize(QtCore.QSize(400, 500))
+        sizePolicy.setHeightForWidth(MenuWindowGUI.sizePolicy().hasHeightForWidth())
+        MenuWindowGUI.setSizePolicy(sizePolicy)
+        MenuWindowGUI.setMinimumSize(QtCore.QSize(400, 500))
+        MenuWindowGUI.setMaximumSize(QtCore.QSize(400, 500))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.BrushStyle.SolidPattern)
@@ -156,15 +156,15 @@ class Ui_MenuWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.BrushStyle.SolidPattern)
         palette.setBrush(QtGui.QPalette.ColorGroup.Disabled, QtGui.QPalette.ColorRole.ToolTipText, brush)
-        MenuWindow.setPalette(palette)
-        MenuWindow.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
-        MenuWindow.setMouseTracking(False)
-        MenuWindow.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
-        MenuWindow.setAcceptDrops(False)
-        MenuWindow.setAutoFillBackground(True)
-        MenuWindow.setStyleSheet("background-color: #2b2b2b;")
-        MenuWindow.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
-        self.centralwidget = QtWidgets.QWidget(parent=MenuWindow)
+        MenuWindowGUI.setPalette(palette)
+        MenuWindowGUI.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
+        MenuWindowGUI.setMouseTracking(False)
+        MenuWindowGUI.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
+        MenuWindowGUI.setAcceptDrops(False)
+        MenuWindowGUI.setAutoFillBackground(False)
+        MenuWindowGUI.setStyleSheet("background-color: #2b2b2b;")
+        MenuWindowGUI.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
+        self.centralwidget = QtWidgets.QWidget(parent=MenuWindowGUI)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -508,25 +508,25 @@ class Ui_MenuWindow(object):
         self.createRoomBTN.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.createRoomBTN.setObjectName("createRoomBTN")
         self.MenuGridLayout.addWidget(self.createRoomBTN, 1, 0, 1, 1)
-        MenuWindow.setCentralWidget(self.centralwidget)
+        MenuWindowGUI.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MenuWindow)
-        QtCore.QMetaObject.connectSlotsByName(MenuWindow)
+        self.retranslateUi(MenuWindowGUI)
+        QtCore.QMetaObject.connectSlotsByName(MenuWindowGUI)
 
-    def retranslateUi(self, MenuWindow):
+    def retranslateUi(self, MenuWindowGUI):
         _translate = QtCore.QCoreApplication.translate
-        MenuWindow.setWindowTitle(_translate("MenuWindow", "MyTama"))
-        self.exitBTN.setText(_translate("MenuWindow", "НАСТРОЙКИ"))
-        self.pushButton_4.setText(_translate("MenuWindow", "ВЫХОД"))
-        self.joinRoomBTN.setText(_translate("MenuWindow", "ПРИСОЕДИНИТЬСЯ"))
-        self.createRoomBTN.setText(_translate("MenuWindow", "СОЗДАТЬ КОМНАТУ"))
+        MenuWindowGUI.setWindowTitle(_translate("MenuWindowGUI", "MyTama"))
+        self.exitBTN.setText(_translate("MenuWindowGUI", "НАСТРОЙКИ"))
+        self.pushButton_4.setText(_translate("MenuWindowGUI", "ВЫХОД"))
+        self.joinRoomBTN.setText(_translate("MenuWindowGUI", "ПРИСОЕДИНИТЬСЯ"))
+        self.createRoomBTN.setText(_translate("MenuWindowGUI", "СОЗДАТЬ КОМНАТУ"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MenuWindow = QtWidgets.QMainWindow()
-    ui = Ui_MenuWindow()
-    ui.setupUi(MenuWindow)
-    MenuWindow.show()
+    MenuWindowGUI = QtWidgets.QMainWindow()
+    ui = Ui_MenuWindowGUI()
+    ui.setupUi(MenuWindowGUI)
+    MenuWindowGUI.show()
     sys.exit(app.exec())

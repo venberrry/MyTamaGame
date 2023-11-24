@@ -4,9 +4,10 @@ from threading import Thread
 import pickle
 from datetime import datetime
 import time
-from PyQt6.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject, Qt, QThread, pyqtSignal
 
-class RecvFromServer(Thread):
+class RecvFromServer(QThread):
+    my_signal = pyqtSignal(str)
     def __init__(self, sock, addr, buff):
         super().__init__(daemon=True)
         self.sock = sock
@@ -25,16 +26,16 @@ class RecvFromServer(Thread):
                                datetime.now().minute, ':',
                                datetime.now().second,'] (', pack.get("nick"), ")",
                                ':', pack.get("data"), "\n")
-                        # self.ui_widget_room.chatArea.append("[", datetime.now().hour, ':',
-                        #        datetime.now().minute, ':',
-                        #        datetime.now().second,'] (', pack.get("nick"), ")",
-                        #        ':', pack.get("data"), "\n")
-                        # self.ui_widget_room.chatArea.append('FFFFF\n')
-                    elif type == "welcome":
-                        pass
+                    elif type == "nickname":
+                        print("nick был принят", pack.get("data"))
+                    elif type == "tamagochi_exist":
+                        print("трунь")
+                        self.my_signal.emit("Im alive")
+                        print("Заходим в комнату с существующим тамагочи")
+                    elif type == "tamagochi_not_exist":
+                        print("соре, вам некуда заходить")
                     elif type == "updates":
                         stats = pack.get("data")
-                    print(stats)
         except Exception as err:
             print("----------DISCONECT1")
             print(f"При получении данных возникла ошибка: {err}")
@@ -51,106 +52,36 @@ class ClientCommunication(Thread):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', 0))
 
-    def get_client_nickname(self):
-        print("Введите свой ник:")
-        self.nickname = str(input())
-
-    def client_send_text(self, temp_type, msg):
-        print('отправляю')
-        try:
-            data_new = dict()
-            if temp_type == "text":
-                data = {
-                    'type': temp_type,
-                    'data': msg,
-                    'optional': ""
-                }
-                print(data)
-                data_new = pickle.dumps(data)
-
-            self.sock.send(data_new + b'OK')
-            print('отправлено')
-        except Exception as err:
-            print("DISCONNECT2")
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
-
-    def first_send_nickname(self, clientNickname):
-        temp_type: str = "nickname_create_room"
+    def send_nickname(self, clientNick: str):     # РАБОТАЕТ
+        temp_type: str = "nickname"
         data = {
             'type': temp_type,
-            'data': clientNickname,
+            'data': clientNick,
             'optional': None
         }
         data_new = pickle.dumps(data)
-        try:
-            print('передаю пикл с именем')
-            self.sock.send(data_new + b'OK')
-        except:
-            print("DISCONNECT4")
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
+        self.sock.send(data_new + b'OK')
 
-    def first_send_character(self, clientChar: str):
-        print('tyyyyyt2')
-        temp_type: str = "client_character"
+    def send_character(self, clientChar: str):    # РАБОТАЕТ
+        temp_type: str = "character"
         data = {
             'type': temp_type,
             'data': clientChar,
             'optional': None
         }
         data_new = pickle.dumps(data)
-        try:
-            print('передаю пикл с ТАМАГОЧЕЙ')
-            self.sock.send(data_new + b'OK')
-        except:
-            print("DISCONNECT4")
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
+        self.sock.send(data_new + b'OK')
 
-    def connect_create_room(self, clientNickname, clientChar):
-        try:
-            print('начинаю подключение и передачу ника', clientNickname, clientChar)
-            self.sock.connect(self.address)
-            recv_cycle = RecvFromServer(self.sock, self.address, self.buff)
-            recv_cycle.start()
-            self.first_send_nickname(clientNickname)
-            print('tyyyyyt')
-            time.sleep(2)
-            self.first_send_character(clientChar)
-            print('tyyyyyt')
-        except Exception as err:
-            print("DISCONNECT3")
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
+    def just_connect(self):      # РАБОТАЕТ
+        self.sock.connect(self.address)
+        recv_cycle = RecvFromServer(self.sock, self.address, self.buff)
+        recv_cycle.start()
 
-    def first_get_info(self):
-        temp_type: str = "connection"
-        data = {
-            'type': temp_type,
-            'data': None,
-            'optional': None
-        }
-        data_new = pickle.dumps(data)
-        try:
-            print('передаю пикл с именем')
-            self.sock.send(data_new + b'OK')
-        except:
-            print("DISCONNECT4")
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
-
-    def connect_to_serv(self, clientNickname):
-        try:
-            print('начинаю подключение и передачу ника', clientNickname)
-            self.sock.connect(self.address)
-            recv_cycle = RecvFromServer(self.sock, self.address, self.buff)
-            recv_cycle.start()
-            self.first_send_nickname(clientNickname)
-            self.first_get_info()
-        except Exception as err:
-            print("DISCONNECT3")
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
 
 
 if __name__ == '__main__':
     cl1 = ClientCommunication(10, ('127.0.0.1', 8007))
     print("created")
     print("open cli conn")
-    cl1.connect_create_room()
+    cl1.just_connect()
     print("conn is over")

@@ -22,7 +22,6 @@ class Utils:
                 if result[-2:] == b'OK':
                     break
 
-        # print('done')
         return result
 
 
@@ -43,5 +42,4 @@ class Utils:
                 result.extend(data)
                 if result[-2:] == b'OK':
                     break
-        print('done')
         return result

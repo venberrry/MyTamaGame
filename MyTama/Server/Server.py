@@ -1,5 +1,7 @@
 import multiprocessing
 import socket
+
+from Tamagochi import Tamago
 from servcommon.ServUtils import Utils
 from threading import Thread
 import pickle
@@ -13,7 +15,7 @@ class Serv:
         self.address = address
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clies = []
-        self.tamagochi = None
+        self.serv_tamago = Tamago("ff", "ff")
 
     def prep(self):
         self.sock.bind(self.address)
@@ -24,15 +26,17 @@ class Serv:
             conn, address = self.sock.accept()
             print(f"NEW CONNECT: {address}")
             clie_nickname = address[0]
-            clie = ClientHandler(conn, address, self.buff, clie_nickname, self.clies, self.tamagochi)
+            print("SERV", self.serv_tamago)
+            clie = ClientHandler(conn, address, self.buff, clie_nickname, self.clies, self.serv_tamago)
             clie.start()
             self.clies.append(clie)
 
+    def save_tama(self, serv_tamago):
+        self.serv_tamago = serv_tamago
 
-if __name__ == '__main__':
-    s1 = Serv(10, ('127.0.0.1', 8007))
-    print("created")
-    s1.prep()
-    print("prep done")
-    s1.connect()
-    print("conn is over")
+s1 = Serv(10, ('127.0.0.1', 8007))
+print("created")
+s1.prep()
+print("prep done")
+s1.connect()
+print("conn is over")

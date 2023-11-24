@@ -9,23 +9,23 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MenuWindow(object):
-    def setupUi(self, MenuWindow):
-        MenuWindow.setObjectName("MenuWindow")
-        MenuWindow.resize(400, 500)
+class Ui_CharWindowGUI(object):
+    def setupUi(self, CharWindowGUI):
+        CharWindowGUI.setObjectName("CharWindowGUI")
+        CharWindowGUI.resize(400, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(MenuWindow.sizePolicy().hasHeightForWidth())
-        MenuWindow.setSizePolicy(sizePolicy)
-        MenuWindow.setMinimumSize(QtCore.QSize(400, 500))
-        MenuWindow.setMaximumSize(QtCore.QSize(400, 500))
+        sizePolicy.setHeightForWidth(CharWindowGUI.sizePolicy().hasHeightForWidth())
+        CharWindowGUI.setSizePolicy(sizePolicy)
+        CharWindowGUI.setMinimumSize(QtCore.QSize(400, 500))
+        CharWindowGUI.setMaximumSize(QtCore.QSize(400, 500))
         palette = QtGui.QPalette()
-        MenuWindow.setPalette(palette)
-        MenuWindow.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
-        MenuWindow.setAutoFillBackground(False)
-        MenuWindow.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
-        self.centralwidget = QtWidgets.QWidget(parent=MenuWindow)
+        CharWindowGUI.setPalette(palette)
+        CharWindowGUI.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
+        CharWindowGUI.setAutoFillBackground(False)
+        CharWindowGUI.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
+        self.centralwidget = QtWidgets.QWidget(parent=CharWindowGUI)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -63,19 +63,19 @@ class Ui_MenuWindow(object):
         self.black_label.setGeometry(QtCore.QRect(20, 120, 101, 101))
         self.black_label.setStyleSheet("")
         self.black_label.setText("")
-        self.black_label.setPixmap(QtGui.QPixmap(":/black_cat_pref/black_cat.jpg"))
+        self.black_label.setPixmap(QtGui.QPixmap("tama_guis/src/black_cat.jpg"))
         self.black_label.setScaledContents(True)
         self.black_label.setObjectName("black_label")
         self.white_label_2 = QtWidgets.QLabel(parent=self.centralwidget)
         self.white_label_2.setGeometry(QtCore.QRect(150, 120, 101, 101))
         self.white_label_2.setText("")
-        self.white_label_2.setPixmap(QtGui.QPixmap(":/white_cat_pref/white_cat.jpg"))
+        self.white_label_2.setPixmap(QtGui.QPixmap("tama_guis/src/white_cat.jpg"))
         self.white_label_2.setScaledContents(True)
         self.white_label_2.setObjectName("white_label_2")
         self.din_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.din_label.setGeometry(QtCore.QRect(280, 120, 101, 101))
         self.din_label.setText("")
-        self.din_label.setPixmap(QtGui.QPixmap(":/dinozarv_pref/dinozavr.jpg"))
+        self.din_label.setPixmap(QtGui.QPixmap("tama_guis/src/dinozavr.jpg"))
         self.din_label.setScaledContents(True)
         self.din_label.setObjectName("din_label")
         self.choose_label = QtWidgets.QLabel(parent=self.centralwidget)
@@ -95,25 +95,25 @@ class Ui_MenuWindow(object):
         self.choose_label.setWordWrap(False)
         self.choose_label.setIndent(0)
         self.choose_label.setObjectName("choose_label")
-        MenuWindow.setCentralWidget(self.centralwidget)
+        CharWindowGUI.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MenuWindow)
-        QtCore.QMetaObject.connectSlotsByName(MenuWindow)
+        self.retranslateUi(CharWindowGUI)
+        QtCore.QMetaObject.connectSlotsByName(CharWindowGUI)
 
-    def retranslateUi(self, MenuWindow):
+    def retranslateUi(self, CharWindowGUI):
         _translate = QtCore.QCoreApplication.translate
-        MenuWindow.setWindowTitle(_translate("MenuWindow", "MyTama"))
-        self.black_BTN.setText(_translate("MenuWindow", "Choose"))
-        self.white_BTN.setText(_translate("MenuWindow", "Choose"))
-        self.din_BNT.setText(_translate("MenuWindow", "Choose"))
-        self.choose_label.setText(_translate("MenuWindow", "<html><head/><body><p align=\"center\">Выберите своего тамагочи:</p></body></html>"))
+        CharWindowGUI.setWindowTitle(_translate("CharWindowGUI", "MyTama"))
+        self.black_BTN.setText(_translate("CharWindowGUI", "Choose"))
+        self.white_BTN.setText(_translate("CharWindowGUI", "Choose"))
+        self.din_BNT.setText(_translate("CharWindowGUI", "Choose"))
+        self.choose_label.setText(_translate("CharWindowGUI", "<html><head/><body><p align=\"center\">Выберите своего тамагочи:</p></body></html>"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MenuWindow = QtWidgets.QMainWindow()
-    ui = Ui_MenuWindow()
-    ui.setupUi(MenuWindow)
-    MenuWindow.show()
+    CharWindowGUI = QtWidgets.QMainWindow()
+    ui = Ui_CharWindowGUI()
+    ui.setupUi(CharWindowGUI)
+    CharWindowGUI.show()
     sys.exit(app.exec())

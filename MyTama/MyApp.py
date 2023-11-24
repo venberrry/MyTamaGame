@@ -1,11 +1,220 @@
 import time
+import socket
+from datetime import datetime
+from common.ClientUtils import Utils
+import pickle
 from PyQt6 import uic
-from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtCore import pyqtSignal, pyqtSlot, QThread
 from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QPushButton, QLabel
 from PyQt6.uic.properties import QtGui
 from PyQt6.QtGui import QPixmap
+from tama_guis.menu import Ui_MenuWindowGUI
+from tama_guis.reg import Ui_RegWindowGUI
+from tama_guis.error import Ui_ErrorWindowGUI
+from tama_guis.loading import Ui_LoadWindowGUI
+from tama_guis.room import Ui_RoomWindowGUI
+from tama_guis.reg_conn import Ui_RegConnWindowGUI
+from tama_guis.character import Ui_CharWindowGUI
+from threading import Thread
 
-from ClientElevation import ClientCommunication
+class RecvFromServer(QThread):
+    my_signal = pyqtSignal(str)
+    def __init__(self, sock, addr, buff):
+        super().__init__()
+        self.sock = sock
+        self.addr = addr
+        self.buff = buff
+
+    def run(self):
+        try:
+            while True:
+                    ut = Utils(self.buff)
+                    pickle_pack = ut.recv_full_pickle(self.sock)
+                    pack = pickle.loads(pickle_pack)
+                    type = pack.get("type")
+                    if type == "text":
+                        print("[", datetime.now().hour, ':',
+                               datetime.now().minute, ':',
+                               datetime.now().second,'] (', pack.get("nick"), ")",
+                               ':', pack.get("data"), "\n")
+                    elif type == "nickname":
+                        print("nick был принят", pack.get("data"))
+                    elif type == "tamagochi_exist":
+                        self.my_signal.emit("Im alive")
+                        print("Заходим в комнату с существующим тамагочи")
+                    elif type == "tamagochi_not_exist":
+                        print("соре, вам некуда заходить")
+                        self.my_signal.emit("Im not alive")
+                    elif type == "updates":
+                        stats = pack.get("data")
+        except Exception as err:
+            print("----------DISCONECT1")
+            print(f"При получении данных возникла ошибка: {err}")
+            print("----------DISCONECT1")
+
+
+class ClientCommunication(QThread):
+    message_sent = pyqtSignal(str)
+
+    def __init__(self, buff, address):
+        super().__init__()
+        self.buff = buff
+        self.address = address
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind(('localhost', 0))
+
+    def send_nickname(self, clientNick: str):     # РАБОТАЕТ
+        print("сендю")
+        temp_type: str = "nickname"
+        data = {
+            'type': temp_type,
+            'data': clientNick,
+            'optional': None
+        }
+        data_new = pickle.dumps(data)
+        self.sock.send(data_new + b'OK')
+
+    def send_character(self, clientChar: str):    # РАБОТАЕТ
+        temp_type: str = "character"
+        data = {
+            'type': temp_type,
+            'data': clientChar,
+            'optional': None
+        }
+        data_new = pickle.dumps(data)
+        self.sock.send(data_new + b'OK')
+
+    def just_connect(self):      # РАБОТАЕТ
+        self.sock.connect(self.address)
+        self.recv_cycle = RecvFromServer(self.sock, self.address, self.buff)
+        self.recv_cycle.my_signal.connect(self.trans_signal)
+        self.recv_cycle.start()
+
+    def trans_signal(self, line):
+        print("trans-signal ", line)
+        self.message_sent.emit(line)
+
+class MenuWindow(QMainWindow, Ui_MenuWindowGUI):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+class RegWindow(QMainWindow, Ui_RegWindowGUI):
+    def __init__(self, client, clientNick, char_window, error_window):
+        super().__init__()
+        self.clientNick = clientNick
+        self.setupUi(self)
+        self.client= client
+        self.char_window = char_window
+        self.error_window = error_window
+        self.sendNickBTN.clicked.connect(self.accept_nick)
+
+    def accept_nick(self):
+        self.clientNick: str = self.nickLineEdit.text()
+        print(self.clientNick)
+        try:
+            self.connect_to_server()
+            self.client.send_nickname(self.clientNick)
+            self.hide()
+            self.char_window.show()
+        except:
+            self.hide()
+            self.error_window.show()
+
+    def connect_to_server(self):
+        self.client.just_connect()
+
+    def test(self, line):
+        print("проверка сигналов", line)
+
+class CharacterWindow(QMainWindow, Ui_CharWindowGUI):
+    def __init__(self, client, error_window, room_window):
+        super().__init__()
+        self.setupUi(self)
+        self.error_window = error_window
+        self.room_window = room_window
+        self.client = client
+        self.black_BTN.clicked.connect(self.black_choosed)
+        self.white_BTN.clicked.connect(self.white_choosed)
+        self.din_BNT.clicked.connect(self.dino_choosed)
+
+    def black_choosed(self):
+        self.character = "black_cat"
+        try:
+            self.client.send_character(self.character)
+            self.hide()
+            self.room_window.show()
+        except:
+            self.hide()
+            self.error_window.show()
+
+    def white_choosed(self):
+        self.character = "white_cat"
+        try:
+            self.client.send_character(self.character)
+            self.hide()
+            self.room_window.show()
+        except:
+            self.hide()
+            self.error_window.show()
+
+    def dino_choosed(self):
+        self.character = "google_dino"
+        try:
+            self.client.send_character(self.character)
+            self.hide()
+            self.room_window.show()
+        except:
+            self.hide()
+            self.error_window.show()
+
+class RoomWindow(QMainWindow, Ui_RoomWindowGUI):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+class LoadingWindow(QMainWindow, Ui_LoadWindowGUI):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+class ErrorWindow(QMainWindow, Ui_ErrorWindowGUI):
+    def __init__(self, menu_window):
+        super().__init__()
+        self.setupUi(self)
+        self.menu_window = menu_window
+        self.backToMenuBTN.clicked.connect(self.back_to_menu)
+
+    def back_to_menu(self):
+        self.hide()
+        self.menu_window.show()
+
+
+class RegConnWindow(QMainWindow, Ui_RegConnWindowGUI):
+    def __init__(self, client, clientNick, char_window, error_window, room_window):
+        super().__init__()
+        self.clientNick = clientNick
+        self.setupUi(self)
+        self.client = client
+        self.char_window = char_window
+        self.error_window = error_window
+        self.room_window = room_window
+        self.sendNickBTN.clicked.connect(self.accept_nick_conn)
+
+    def accept_nick_conn(self):
+        self.clientNick: str = self.nickLineEdit.text()
+        print(self.clientNick)
+        try:
+            self.connect_to_server()
+            self.client.send_nickname(self.clientNick)
+            self.hide()
+        except:
+            self.hide()
+            self.error_window.show()
+
+    def connect_to_server(self):
+        self.client.just_connect()
+
 
 class MyWindow(QMainWindow):
     signal = pyqtSignal(str)
@@ -14,175 +223,82 @@ class MyWindow(QMainWindow):
         super().__init__()
         self.setFixedSize(400, 500)
         self.setStyleSheet("background-color: #2b2b2b;")
-        # Создаем стек с окнами
-        self.statusBar().setSizeGripEnabled(False)
-        self.stacked_widget = QStackedWidget(self)
-        self.setCentralWidget(self.stacked_widget)
 
-        self.ui_widget_menu = uic.loadUi('tama_guis/menu.ui')
-        self.stacked_widget.addWidget(self.ui_widget_menu)
-        self.ui_widget_reg = uic.loadUi('tama_guis/reg.ui')
-        self.stacked_widget.addWidget(self.ui_widget_reg)
-        self.ui_widget_reg_conn = uic.loadUi('tama_guis/reg_conn.ui')
-        self.stacked_widget.addWidget(self.ui_widget_reg_conn)
-        self.ui_widget_error = uic.loadUi('tama_guis/error.ui')
-        self.stacked_widget.addWidget(self.ui_widget_error)
-        self.ui_widget_load = uic.loadUi('tama_guis/loading.ui')
-        self.stacked_widget.addWidget(self.ui_widget_load)
-        self.ui_widget_room = uic.loadUi('tama_guis/room.ui')
-        self.stacked_widget.addWidget(self.ui_widget_room)
-        self.ui_widget_character = uic.loadUi('tama_guis/character.ui')
-        self.stacked_widget.addWidget(self.ui_widget_character)
+        self.client = ClientCommunication(4096, ('127.0.0.1', 8007))
+        self.client.message_sent.connect(self.signal_from_server)
 
-        self.ui_widget_menu.joinRoomBTN.clicked.connect(self.join_server)
+        self.clientNick = "username"
 
-        # Установка изображений для QLabel в 'character.ui'
-        self.ui_widget_character.black_label.setPixmap(QPixmap("tama_guis/src/black_cat.jpg"))
-        self.ui_widget_character.white_label_2.setPixmap(QPixmap("tama_guis/src/white_cat.jpg"))
-        self.ui_widget_character.din_label.setPixmap(QPixmap("tama_guis/src/dinozavr.jpg"))
+        self.gui = Ui_MenuWindowGUI()
+        self.gui.setupUi(self)
+        self.load_window = LoadingWindow()
+        self.error_window = ErrorWindow(self.gui)
+        self.room_window = RoomWindow()
+        self.char_window = CharacterWindow(self.client, self.error_window, self.room_window)
+        self.registation_window = RegWindow(self.client, self.clientNick, self.char_window, self.error_window)
+        self.registation_connect_window = RegConnWindow(self.client, self.clientNick, self.char_window, self.error_window, self.room_window)
 
-        # НАЧАЛО
-        self.stacked_widget.setCurrentWidget(self.ui_widget_menu)
+        self.gui.createRoomBTN.clicked.connect(self.create_room)
+        self.gui.joinRoomBTN.clicked.connect(self.join_room)
 
-        self.statusBar().setSizeGripEnabled(False)
+    def create_room(self):
+        self.hide()
+        self.registation_window.show()
 
-        # create room
-        createRoomBtn = self.findChild(QPushButton, 'createRoomBTN')
-        createRoomBtn.clicked.connect(self.show_widget_reg)
-        self.ui_widget_reg.sendNickBTN.clicked.connect(self.acceptNick)
+    def join_room(self):
+        self.hide()
+        self.registation_connect_window.show()
 
-        # error widget
-        self.ui_widget_error.backToMenuBTN.clicked.connect(self.show_menu)
+    def signal_from_server(self, line):
+        print("GUI", line)
 
-        # Настройка ввода количества символов для ника юзера
-        self.ui_widget_reg.nickLineEdit.setMaxLength(10)
-        self.ui_widget_reg.nickLineEdit.textChanged.connect(self.on_text_changed)
+        # # Создаем стек с окнами
+        # self.statusBar().setSizeGripEnabled(False)
+        # self.stacked_widget = QStackedWidget(self)
+        # self.setCentralWidget(self.stacked_widget)
 
-        # Room Setting
-        # self.ui_widget_room.chatWidget.inputArea
-        self.ui_widget_room.submitBTN.clicked.connect(self.send_message_to_chat)
+        # self.ui_widget_menu = uic.loadUi('tama_guis/menu.ui')
+        # self.stacked_widget.addWidget(self.ui_widget_menu)
+        # self.ui_widget_reg = uic.loadUi('tama_guis/reg.ui')
+        # self.stacked_widget.addWidget(self.ui_widget_reg)
+        # self.ui_widget_reg_conn = uic.loadUi('tama_guis/reg_conn.ui')
+        # self.stacked_widget.addWidget(self.ui_widget_reg_conn)
+        # self.ui_widget_error = uic.loadUi('tama_guis/error.ui')
+        # self.stacked_widget.addWidget(self.ui_widget_error)
+        # self.ui_widget_load = uic.loadUi('tama_guis/loading.ui')
+        # self.stacked_widget.addWidget(self.ui_widget_load)
+        # self.ui_widget_room = uic.loadUi('tama_guis/room.ui')
+        # self.stacked_widget.addWidget(self.ui_widget_room)
+        # self.ui_widget_character = uic.loadUi('tama_guis/character.ui')
+        # self.stacked_widget.addWidget(self.ui_widget_character)
 
-    def connect_to_server_create_room(self):
-        try:
-            self.client = ClientCommunication(4096, ('127.0.0.1', 8007))
-            self.client.connect_create_room(self.clientNickname, self.character)
-            print('передал', self.clientNickname, self.character)
-
-            self.stacked_widget.setCurrentWidget(self.ui_widget_room)
-        except Exception as e:
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
-            print(f"An error occurred: {e}")
-
-    @pyqtSlot()
-    def show_menu(self):
-        self.stacked_widget.setCurrentWidget(self.ui_widget_menu)
-
-    @pyqtSlot()
-    def show_choose_your_pikachu(self):
-        self.stacked_widget.setCurrentWidget(self.ui_widget_character)
-        print('err5')
-        self.ui_widget_character.black_BTN.clicked.connect(self.set_character_black)
-        print('err6')
-        self.ui_widget_character.white_BTN.clicked.connect(self.set_character_white)
-        print('err7')
-        self.ui_widget_character.din_BNT.clicked.connect(self.set_character_dino)
-        print('я сделал')
-
-    @pyqtSlot()
-    def set_character_black(self):
-        self.character = "black_one"
-        print('черный')
-        self.stacked_widget.setCurrentWidget(self.ui_widget_load)
-        self.start_connect()
-
-    @pyqtSlot()
-    def set_character_white(self):
-        self.character = "white_one"
-        print('белый')
-        self.stacked_widget.setCurrentWidget(self.ui_widget_load)
-        self.start_connect()
-
-    @pyqtSlot()
-    def set_character_dino(self):
-        self.character = "dino_one"
-        print('динозавр гугл')
-        self.stacked_widget.setCurrentWidget(self.ui_widget_load)
-        self.start_connect()
-
-    @pyqtSlot()
-    def show_widget_reg(self):
-        self.stacked_widget.setCurrentWidget(self.ui_widget_reg)
-
-    @pyqtSlot()
-    def acceptNick(self):
-        self.clientNickname: str = self.ui_widget_reg.nickLineEdit.text()
-        print(self.clientNickname)
-        self.ui_widget_reg.nickLineEdit.clear()
-        try:
-            print('q')
-            self.show_choose_your_pikachu()
-            print('ваш карактер принят')
-        except:
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
-            print('err1')
-        print('tyt3')
-
-    def start_connect(self):
-        try:
-            self.connect_to_server_create_room()
-            print('коннект ту сервер')
-        except:
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
-            print('err1')
-
-    @pyqtSlot()
-    def send_message_to_chat(self):
-        print('oi3')
-        msg = self.ui_widget_room.inputArea.text()
-        if msg != "":
-            print('oi2')
-            self.client.client_send_text("text", msg)
-            self.ui_widget_room.chatArea.append(msg)
-            print('oi')
-        else:
-            print('oioioii')
-        # clear
-        self.ui_widget_room.inputArea.clear()
-
-    def on_text_changed(self, text):
-        max_length = 10
-        if len(text) > max_length:
-            self.sender().setText(text[:max_length])
-
-    def connect_to_server(self):
-        try:
-            self.client = ClientCommunication(4096, ('127.0.0.1', 8007))
-            self.client.connect_to_serv(self.clientNickname)
-            print('передал', self.clientNickname)
-
-            self.stacked_widget.setCurrentWidget(self.ui_widget_room)
-        except Exception as e:
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
-            print(f"An error occurred: {e}")
-
-    def acceptNick_withoutCreatingServ(self):
-        self.clientNickname: str = self.ui_widget_reg.nickLineEdit.text()
-        print(self.clientNickname)
-        self.ui_widget_reg.nickLineEdit.clear()
-        try:
-            print('ваше имя принято', self.clientNickname)
-            print('начинаю подключение')
-            self.connect_to_server()
-        except:
-            self.stacked_widget.setCurrentWidget(self.ui_widget_error)
-            print('err1')
-        print('tyt3')
-
-    def join_server(self):
-        self.stacked_widget.setCurrentWidget(self.ui_widget_reg_conn)
-        self.ui_widget_reg_conn.sendNickBTN.clicked.connect(self.acceptNick_withoutCreatingServ)
-
-
+        # self.ui_widget_menu.joinRoomBTN.clicked.connect(self.join_server)
+        #
+        # # Установка изображений для QLabel в 'character.ui'
+        # self.ui_widget_character.black_label.setPixmap(QPixmap("tama_guis/src/black_cat.jpg"))
+        # self.ui_widget_character.white_label_2.setPixmap(QPixmap("tama_guis/src/white_cat.jpg"))
+        # self.ui_widget_character.din_label.setPixmap(QPixmap("tama_guis/src/dinozavr.jpg"))
+        #
+        # # НАЧАЛО
+        # self.stacked_widget.setCurrentWidget(self.ui_widget_menu)
+        #
+        # self.statusBar().setSizeGripEnabled(False)
+        #
+        # # create room
+        # createRoomBtn = self.findChild(QPushButton, 'createRoomBTN')
+        # createRoomBtn.clicked.connect(self.show_widget_reg)
+        # self.ui_widget_reg.sendNickBTN.clicked.connect(self.acceptNick)
+        #
+        # # error widget
+        # self.ui_widget_error.backToMenuBTN.clicked.connect(self.show_menu)
+        #
+        # # Настройка ввода количества символов для ника юзера
+        # self.ui_widget_reg.nickLineEdit.setMaxLength(10)
+        # self.ui_widget_reg.nickLineEdit.textChanged.connect(self.on_text_changed)
+        #
+        # # Room Setting
+        # # self.ui_widget_room.chatWidget.inputArea
+        # self.ui_widget_room.submitBTN.clicked.connect(self.send_message_to_chat)
 
 if __name__ == '__main__':
     app = QApplication([])

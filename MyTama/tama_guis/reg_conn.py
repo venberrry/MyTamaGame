@@ -9,17 +9,17 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MenuWindow(object):
-    def setupUi(self, MenuWindow):
-        MenuWindow.setObjectName("MenuWindow")
-        MenuWindow.resize(400, 500)
+class Ui_RegConnWindowGUI(object):
+    def setupUi(self, RegConnWindowGUI):
+        RegConnWindowGUI.setObjectName("RegConnWindowGUI")
+        RegConnWindowGUI.resize(400, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(MenuWindow.sizePolicy().hasHeightForWidth())
-        MenuWindow.setSizePolicy(sizePolicy)
-        MenuWindow.setMinimumSize(QtCore.QSize(400, 500))
-        MenuWindow.setMaximumSize(QtCore.QSize(400, 500))
+        sizePolicy.setHeightForWidth(RegConnWindowGUI.sizePolicy().hasHeightForWidth())
+        RegConnWindowGUI.setSizePolicy(sizePolicy)
+        RegConnWindowGUI.setMinimumSize(QtCore.QSize(400, 500))
+        RegConnWindowGUI.setMaximumSize(QtCore.QSize(400, 500))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.BrushStyle.SolidPattern)
@@ -156,15 +156,15 @@ class Ui_MenuWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.BrushStyle.SolidPattern)
         palette.setBrush(QtGui.QPalette.ColorGroup.Disabled, QtGui.QPalette.ColorRole.ToolTipText, brush)
-        MenuWindow.setPalette(palette)
-        MenuWindow.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
-        MenuWindow.setMouseTracking(False)
-        MenuWindow.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
-        MenuWindow.setAcceptDrops(False)
-        MenuWindow.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
-        MenuWindow.setAutoFillBackground(False)
-        MenuWindow.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
-        self.centralwidget = QtWidgets.QWidget(parent=MenuWindow)
+        RegConnWindowGUI.setPalette(palette)
+        RegConnWindowGUI.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
+        RegConnWindowGUI.setMouseTracking(False)
+        RegConnWindowGUI.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
+        RegConnWindowGUI.setAcceptDrops(False)
+        RegConnWindowGUI.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
+        RegConnWindowGUI.setAutoFillBackground(False)
+        RegConnWindowGUI.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
+        self.centralwidget = QtWidgets.QWidget(parent=RegConnWindowGUI)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -225,23 +225,23 @@ class Ui_MenuWindow(object):
         font.setPointSize(16)
         self.sendNickBTN.setFont(font)
         self.sendNickBTN.setObjectName("sendNickBTN")
-        MenuWindow.setCentralWidget(self.centralwidget)
+        RegConnWindowGUI.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MenuWindow)
-        QtCore.QMetaObject.connectSlotsByName(MenuWindow)
+        self.retranslateUi(RegConnWindowGUI)
+        QtCore.QMetaObject.connectSlotsByName(RegConnWindowGUI)
 
-    def retranslateUi(self, MenuWindow):
+    def retranslateUi(self, RegConnWindowGUI):
         _translate = QtCore.QCoreApplication.translate
-        MenuWindow.setWindowTitle(_translate("MenuWindow", "MyTama"))
-        self.label.setText(_translate("MenuWindow", "<html><head/><body><p align=\"center\">Введите ник:</p></body></html>"))
-        self.sendNickBTN.setText(_translate("MenuWindow", "Тык"))
+        RegConnWindowGUI.setWindowTitle(_translate("RegConnWindowGUI", "MyTama"))
+        self.label.setText(_translate("RegConnWindowGUI", "<html><head/><body><p align=\"center\">Введите ник:</p></body></html>"))
+        self.sendNickBTN.setText(_translate("RegConnWindowGUI", "Тык"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MenuWindow = QtWidgets.QMainWindow()
-    ui = Ui_MenuWindow()
-    ui.setupUi(MenuWindow)
-    MenuWindow.show()
+    RegConnWindowGUI = QtWidgets.QMainWindow()
+    ui = Ui_RegConnWindowGUI()
+    ui.setupUi(RegConnWindowGUI)
+    RegConnWindowGUI.show()
     sys.exit(app.exec())

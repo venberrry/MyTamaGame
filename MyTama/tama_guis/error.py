@@ -9,17 +9,17 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MenuWindow(object):
-    def setupUi(self, MenuWindow):
-        MenuWindow.setObjectName("MenuWindow")
-        MenuWindow.resize(400, 500)
+class Ui_ErrorWindowGUI(object):
+    def setupUi(self, ErrorWindowGUI):
+        ErrorWindowGUI.setObjectName("ErrorWindowGUI")
+        ErrorWindowGUI.resize(400, 500)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(MenuWindow.sizePolicy().hasHeightForWidth())
-        MenuWindow.setSizePolicy(sizePolicy)
-        MenuWindow.setMinimumSize(QtCore.QSize(400, 500))
-        MenuWindow.setMaximumSize(QtCore.QSize(400, 500))
+        sizePolicy.setHeightForWidth(ErrorWindowGUI.sizePolicy().hasHeightForWidth())
+        ErrorWindowGUI.setSizePolicy(sizePolicy)
+        ErrorWindowGUI.setMinimumSize(QtCore.QSize(400, 500))
+        ErrorWindowGUI.setMaximumSize(QtCore.QSize(400, 500))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.BrushStyle.SolidPattern)
@@ -156,14 +156,14 @@ class Ui_MenuWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.BrushStyle.SolidPattern)
         palette.setBrush(QtGui.QPalette.ColorGroup.Disabled, QtGui.QPalette.ColorRole.ToolTipText, brush)
-        MenuWindow.setPalette(palette)
-        MenuWindow.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
-        MenuWindow.setMouseTracking(False)
-        MenuWindow.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
-        MenuWindow.setAcceptDrops(False)
-        MenuWindow.setAutoFillBackground(False)
-        MenuWindow.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
-        self.centralwidget = QtWidgets.QWidget(parent=MenuWindow)
+        ErrorWindowGUI.setPalette(palette)
+        ErrorWindowGUI.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
+        ErrorWindowGUI.setMouseTracking(False)
+        ErrorWindowGUI.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
+        ErrorWindowGUI.setAcceptDrops(False)
+        ErrorWindowGUI.setAutoFillBackground(False)
+        ErrorWindowGUI.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
+        self.centralwidget = QtWidgets.QWidget(parent=ErrorWindowGUI)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -214,23 +214,23 @@ class Ui_MenuWindow(object):
 "}")
         self.backToMenuBTN.setAutoRepeatDelay(300)
         self.backToMenuBTN.setObjectName("backToMenuBTN")
-        MenuWindow.setCentralWidget(self.centralwidget)
+        ErrorWindowGUI.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MenuWindow)
-        QtCore.QMetaObject.connectSlotsByName(MenuWindow)
+        self.retranslateUi(ErrorWindowGUI)
+        QtCore.QMetaObject.connectSlotsByName(ErrorWindowGUI)
 
-    def retranslateUi(self, MenuWindow):
+    def retranslateUi(self, ErrorWindowGUI):
         _translate = QtCore.QCoreApplication.translate
-        MenuWindow.setWindowTitle(_translate("MenuWindow", "MyTama"))
-        self.label.setText(_translate("MenuWindow", "<html><head/><body><p align=\"center\">Кажется что-то не работает<br/>(*_ _)人</p></body></html>"))
-        self.backToMenuBTN.setText(_translate("MenuWindow", "..."))
+        ErrorWindowGUI.setWindowTitle(_translate("ErrorWindowGUI", "MyTama"))
+        self.label.setText(_translate("ErrorWindowGUI", "<html><head/><body><p align=\"center\">Кажется что-то не работает<br/>(*_ _)人</p></body></html>"))
+        self.backToMenuBTN.setText(_translate("ErrorWindowGUI", "..."))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MenuWindow = QtWidgets.QMainWindow()
-    ui = Ui_MenuWindow()
-    ui.setupUi(MenuWindow)
-    MenuWindow.show()
+    ErrorWindowGUI = QtWidgets.QMainWindow()
+    ui = Ui_ErrorWindowGUI()
+    ui.setupUi(ErrorWindowGUI)
+    ErrorWindowGUI.show()
     sys.exit(app.exec())

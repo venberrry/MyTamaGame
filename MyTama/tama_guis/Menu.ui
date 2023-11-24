@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MenuWindow</class>
- <widget class="QMainWindow" name="MenuWindow">
+ <class>MenuWindowGUI</class>
+ <widget class="QMainWindow" name="MenuWindowGUI">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -459,7 +459,7 @@
    <string>MyTama</string>
   </property>
   <property name="autoFillBackground">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #2b2b2b;</string>
