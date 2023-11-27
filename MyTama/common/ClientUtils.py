@@ -1,5 +1,6 @@
 import socket
 import pickle
+from ServerPack.Tamagochi import Tamago
 
 class Utils:
     def __init__(self, buffer_size):

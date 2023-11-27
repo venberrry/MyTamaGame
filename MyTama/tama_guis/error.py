@@ -175,9 +175,6 @@ class Ui_ErrorWindowGUI(object):
         self.centralwidget.setStyleSheet("QWidget {\n"
 "    background-color: #2b2b2b;\n"
 "}\n"
-"QPushButton {\n"
-"    color: white;\n"
-"}\n"
 "QToolButton{\n"
 "    \n"
 "    background-color: rgb(255, 255, 255);\n"
@@ -223,7 +220,7 @@ class Ui_ErrorWindowGUI(object):
         _translate = QtCore.QCoreApplication.translate
         ErrorWindowGUI.setWindowTitle(_translate("ErrorWindowGUI", "MyTama"))
         self.label.setText(_translate("ErrorWindowGUI", "<html><head/><body><p align=\"center\">Кажется что-то не работает<br/>(*_ _)人</p></body></html>"))
-        self.backToMenuBTN.setText(_translate("ErrorWindowGUI", "..."))
+        self.backToMenuBTN.setText(_translate("ErrorWindowGUI", "back"))
 
 
 if __name__ == "__main__":

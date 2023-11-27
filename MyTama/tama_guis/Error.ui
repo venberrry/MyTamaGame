@@ -490,9 +490,6 @@
     <string notr="true">QWidget {
     background-color: #2b2b2b;
 }
-QPushButton {
-	color: white;
-}
 QToolButton{
 	
 	background-color: rgb(255, 255, 255);
@@ -568,7 +565,7 @@ QToolButton{
 }</string>
     </property>
     <property name="text">
-     <string>...</string>
+     <string>back</string>
     </property>
     <property name="autoRepeatDelay">
      <number>300</number>
