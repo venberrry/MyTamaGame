@@ -189,6 +189,7 @@ class Ui_RoomWindowGUI(object):
         self.inputArea = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.inputArea.setGeometry(QtCore.QRect(20, 430, 311, 20))
         self.inputArea.setStyleSheet("color: rgb(255, 255, 255);")
+        self.inputArea.setText("")
         self.inputArea.setObjectName("inputArea")
         self.submitBTN = QtWidgets.QPushButton(parent=self.centralwidget)
         self.submitBTN.setGeometry(QtCore.QRect(330, 430, 51, 21))
@@ -245,7 +246,6 @@ class Ui_RoomWindowGUI(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.inputArea.setText(_translate("RoomWindowGUI", "Chat Disabled"))
         self.submitBTN.setText(_translate("RoomWindowGUI", "send"))
         self.eat_text.setText(_translate("RoomWindowGUI", "Голод:"))
         self.mood_text.setText(_translate("RoomWindowGUI", "Настроение:"))

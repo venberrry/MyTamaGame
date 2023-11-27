@@ -15,10 +15,8 @@ class Serv:
         self.address = address
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clies = []
+        # self.life = Life(self.serv_tamago)
 
-        self.serv_tamago = Tamago("ff", "ff")
-        self.life = Life(self.serv_tamago)
-        self.gameStarted = False
     def prep(self):
         self.sock.bind(self.address)
         self.sock.listen(2)
@@ -28,17 +26,13 @@ class Serv:
             conn, address = self.sock.accept()
             print(f"NEW CONNECT: {address}")
             clie_nickname = address[0]
-            print("SERV", self.serv_tamago)
-            clie = ClientHandler(conn, address, self.buff, clie_nickname, self.clies, self.serv_tamago)
-            if not self.gameStarted:
-                self.life.start()
-                self.gameStarted = True
+            clie = ClientHandler(conn, address, self.buff, clie_nickname, self.clies)
+            # if not self.gameStarted:
+            #     self.life.start()
+            #     self.gameStarted = True
+            # self.life.clients.append(clie)
             clie.start()
-            self.life.clients.append(clie)
             self.clies.append(clie)
-
-    def save_tama(self, serv_tamago):
-        self.serv_tamago = serv_tamago
 
 s1 = Serv(10, ('127.0.0.1', 8007))
 print("created")

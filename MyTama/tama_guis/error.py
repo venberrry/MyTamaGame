@@ -220,7 +220,7 @@ class Ui_ErrorWindowGUI(object):
         _translate = QtCore.QCoreApplication.translate
         ErrorWindowGUI.setWindowTitle(_translate("ErrorWindowGUI", "MyTama"))
         self.label.setText(_translate("ErrorWindowGUI", "<html><head/><body><p align=\"center\">Кажется что-то не работает<br/>(*_ _)人</p></body></html>"))
-        self.backToMenuBTN.setText(_translate("ErrorWindowGUI", "back"))
+        self.backToMenuBTN.setText(_translate("ErrorWindowGUI", "exit"))
 
 
 if __name__ == "__main__":

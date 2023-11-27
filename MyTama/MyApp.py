@@ -107,12 +107,13 @@ class ClientCommunication(QThread):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', 0))
 
-    def send_nickname(self, clientNick: str, type_connect: str):  # РАБОТАЕТ
+    def send_nickname(self, clientNick: str, type_connect: str, con_nickname):  # РАБОТАЕТ
         temp_type: str = "nickname"
         data = {
             'type': temp_type,
             'data': clientNick,
-            'optional': type_connect
+            'optional': type_connect,
+            'connectedNick': con_nickname
         }
         data_new = pickle.dumps(data)
         self.sock.send(data_new + b'OK')
@@ -204,7 +205,7 @@ class RegWindow(QMainWindow, Ui_RegWindowGUI):
         print(self.clientNick, "создаёт комнату")
         try:
             self.connect_to_server()
-            self.client.send_nickname(self.clientNick, "create")
+            self.client.send_nickname(self.clientNick, "create", "")
             self.hide()
         except:
             self.hide()
@@ -360,10 +361,11 @@ class RegConnWindow(QMainWindow, Ui_RegConnWindowGUI):
 
     def accept_nick_conn(self):
         self.clientNick: str = self.nickLineEdit.text()
-        print(self.clientNick, "подключается")
+        self.whereToConnect: str = self.nickToConnLineEdit.text()
+        print(self.clientNick, "подключается к", self.whereToConnect)
         try:
             self.connect_to_server()
-            self.client.send_nickname(self.clientNick, "join")
+            self.client.send_nickname(self.clientNick, "join", self.whereToConnect)
             self.hide()
         except:
             self.hide()

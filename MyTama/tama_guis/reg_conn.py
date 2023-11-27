@@ -182,7 +182,7 @@ class Ui_RegConnWindowGUI(object):
 "")
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(130, 150, 141, 55))
+        self.label.setGeometry(QtCore.QRect(100, 90, 201, 55))
         font = QtGui.QFont()
         font.setFamily("Franklin Gothic Demi")
         font.setPointSize(18)
@@ -199,7 +199,7 @@ class Ui_RegConnWindowGUI(object):
         self.label.setIndent(0)
         self.label.setObjectName("label")
         self.nickLineEdit = QtWidgets.QLineEdit(parent=self.centralwidget)
-        self.nickLineEdit.setGeometry(QtCore.QRect(60, 220, 201, 41))
+        self.nickLineEdit.setGeometry(QtCore.QRect(100, 170, 201, 41))
         font = QtGui.QFont()
         font.setFamily("Franklin Gothic Demi")
         font.setPointSize(16)
@@ -214,7 +214,7 @@ class Ui_RegConnWindowGUI(object):
 "}")
         self.nickLineEdit.setObjectName("nickLineEdit")
         self.sendNickBTN = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.sendNickBTN.setGeometry(QtCore.QRect(280, 220, 61, 41))
+        self.sendNickBTN.setGeometry(QtCore.QRect(170, 380, 61, 41))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -225,6 +225,38 @@ class Ui_RegConnWindowGUI(object):
         font.setPointSize(16)
         self.sendNickBTN.setFont(font)
         self.sendNickBTN.setObjectName("sendNickBTN")
+        self.label_2 = QtWidgets.QLabel(parent=self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(50, 230, 301, 55))
+        font = QtGui.QFont()
+        font.setFamily("Franklin Gothic Demi")
+        font.setPointSize(18)
+        self.label_2.setFont(font)
+        self.label_2.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
+        self.label_2.setAutoFillBackground(False)
+        self.label_2.setStyleSheet("QLabel {\n"
+"    color: white;\n"
+"    text-align: center;\n"
+"}")
+        self.label_2.setTextFormat(QtCore.Qt.TextFormat.AutoText)
+        self.label_2.setScaledContents(True)
+        self.label_2.setWordWrap(False)
+        self.label_2.setIndent(0)
+        self.label_2.setObjectName("label_2")
+        self.nickToConnLineEdit = QtWidgets.QLineEdit(parent=self.centralwidget)
+        self.nickToConnLineEdit.setGeometry(QtCore.QRect(100, 310, 201, 41))
+        font = QtGui.QFont()
+        font.setFamily("Franklin Gothic Demi")
+        font.setPointSize(16)
+        self.nickToConnLineEdit.setFont(font)
+        self.nickToConnLineEdit.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.CrossCursor))
+        self.nickToConnLineEdit.setStyleSheet("QLineEdit{\n"
+"    color: white;\n"
+"    maxlength: 10;\n"
+"}\n"
+"input[type=\"text\"] {\n"
+"    maxlength: 10;\n"
+"}")
+        self.nickToConnLineEdit.setObjectName("nickToConnLineEdit")
         RegConnWindowGUI.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(RegConnWindowGUI)
@@ -233,8 +265,9 @@ class Ui_RegConnWindowGUI(object):
     def retranslateUi(self, RegConnWindowGUI):
         _translate = QtCore.QCoreApplication.translate
         RegConnWindowGUI.setWindowTitle(_translate("RegConnWindowGUI", "MyTama"))
-        self.label.setText(_translate("RegConnWindowGUI", "<html><head/><body><p align=\"center\">Введите ник:</p></body></html>"))
+        self.label.setText(_translate("RegConnWindowGUI", "<html><head/><body><p align=\"center\">Введите свой ник:</p></body></html>"))
         self.sendNickBTN.setText(_translate("RegConnWindowGUI", "Тык"))
+        self.label_2.setText(_translate("RegConnWindowGUI", "<html><head/><body><p align=\"center\">Введите ник для подключения:</p></body></html>"))
 
 
 if __name__ == "__main__":

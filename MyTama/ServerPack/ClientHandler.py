@@ -1,57 +1,38 @@
-import random
-
 from threading import Thread
 import pickle
-import multiprocessing
-import time
 import Tamagochi
 from ServerPack.servcommon.ServUtils import Utils
+from ServerPack.Tamagochi import Tamago, Life
 
 
 class ClientHandler(Thread):
-    def __init__(self, sock, addr, buff, nickname, clies:list, serv_tamago):
+    def __init__(self, sock, addr, buff, nickname, clies:list):
         super().__init__()
         self.sock = sock
         self.addr = addr
         self.buff = buff
         self.nick_clie = nickname
-        self.clies = clies
-        self.tamagochi = serv_tamago
+        self.clies: list[ClientHandler] = clies
+        self.tamagochi = Tamago("ff", "ff")
+        self.life = Life(self.tamagochi)
+        self.joined_people = []
 
     def send_mes_all(self, pack):
-        for cli in self.clies:
+        for cli in self.joined_people:
             try:
                 cli.sock.send(pack + b'OK')
             except Exception as err:
                 print(err)
-                self.clies.remove(cli)
+                self.joined_people.remove(cli)
 
     def send_mes_not_all(self, pack):
-        for cli in self.clies:
+        for cli in self.joined_people:
             if cli.sock != self.sock:
                 try:
                     cli.sock.send(pack + b'OK')
                 except Exception as err:
                     print(err)
-                    self.clies.remove(cli)
-
-    def pack_new_char_characteristics(self, tama):
-        temp_type: str = "updates"
-        data = {
-            'type': temp_type,
-            'data': tama,
-            'optional': None
-        }
-        data_new = pickle.dumps(data)
-        return data_new
-
-    def send_new_tama_stats(self, pack):
-        for cli in self.clies:
-            try:
-                cli.sock.send(pack + b'OK')
-            except Exception as err:
-                print(err)
-                self.clies.remove(cli)
+                    self.joined_people.remove(cli)
 
     def send_mes_directly(self, new_pack):
         for cli in self.clies:
@@ -79,12 +60,28 @@ class ClientHandler(Thread):
                     self.send_mes_not_all(new_pack)
                 elif type == "nickname":
                     self.nick_clie = pack.get("data")
+
+                    for cli in self.clies:
+                        if cli.nick_clie == self.nick_clie and cli.sock != self.sock:
+                            print("---------------------------------------")
+                            print(cli.nick_clie, self.nick_clie)
+                            print(cli, self)
+                            pack.update({"type": "tama_exist_cannot_create"})
+                            pack.update({"data": ""})
+                            pack.update({"optional": ""})
+                            new_pack = pickle.dumps(pack)
+                            self.send_mes_directly(new_pack)
+
                     conn_type = pack.get("optional")
                     print("Ник изменен", self.nick_clie)
                     print("CH NICK", self.tamagochi)
                     print("CH NICK", self.tamagochi.name)
                     print("CH NICK", self.tamagochi.creator)
                     if conn_type == "create" and self.tamagochi.name == "ff":
+                        self.life.start()
+                        for cli in self.clies:
+                            if cli.sock == self.sock:
+                                self.joined_people.append(cli)
                         pack.update({"type": "tama_not_exist_can_create"})
                         pack.update({"data": self.tamagochi})
                         pack.update({"optional": ""})
@@ -96,18 +93,30 @@ class ClientHandler(Thread):
                         pack.update({"optional": ""})
                         new_pack = pickle.dumps(pack)
                         self.send_mes_directly(new_pack)
-                    elif conn_type == "join" and self.tamagochi.name == "ff":
-                        pack.update({"type": "tama_not_exist_cannot_join"})
-                        pack.update({"data": ""})
-                        pack.update({"optional": ""})
-                        new_pack = pickle.dumps(pack)
-                        self.send_mes_directly(new_pack)
-                    elif conn_type == "join" and self.tamagochi.name != "ff":
-                        pack.update({"type": "tama_can_join"})
-                        pack.update({"data":  self.tamagochi})
-                        pack.update({"optional": ""})
-                        new_pack = pickle.dumps(pack)
-                        self.send_mes_directly(new_pack)
+                    elif conn_type == "join":
+                        conn_nick = pack.get("connectedNick")
+                        print(conn_nick)
+                        joined = False
+                        for cli in self.clies:
+                            print(cli.nick_clie)
+                            if cli.nick_clie == conn_nick and conn_nick != self.nick_clie:
+                                self.joined_people = cli.joined_people
+                                cli.joined_people.append(self)
+                                self.tamagochi = cli.tamagochi
+                                pack.update({"type": "tama_can_join"})
+                                pack.update({"data": self.tamagochi})
+                                pack.update({"optional": ""})
+                                new_pack = pickle.dumps(pack)
+                                self.send_mes_directly(new_pack)
+                                joined = True
+                        if not joined:
+                            pack.update({"type": "tama_not_exist_cannot_join"})
+                            pack.update({"data": ""})
+                            pack.update({"optional": ""})
+                            new_pack = pickle.dumps(pack)
+                            self.send_mes_directly(new_pack)
+
+
                 elif type == "character":
                     self.character = pack.get("data")
                     self.tamagochi.name = self.character

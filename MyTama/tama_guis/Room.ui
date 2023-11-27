@@ -532,7 +532,7 @@ p, li { white-space: pre-wrap; }
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Chat Enabled</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="submitBTN">

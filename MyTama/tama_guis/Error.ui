@@ -565,7 +565,7 @@ QToolButton{
 }</string>
     </property>
     <property name="text">
-     <string>back</string>
+     <string>exit</string>
     </property>
     <property name="autoRepeatDelay">
      <number>300</number>
