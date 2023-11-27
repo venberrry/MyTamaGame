@@ -144,7 +144,7 @@ class ClientHandler(Thread):
                     self.send_mes_all(new_pack)
                 elif type == "message":
                     pack["type"] = "new_message"
-                    pack["data"] = pack.get("data")
+                    pack["data"] = str(self.nick_clie + " : " + pack.get("data"))
                     new_pack = pickle.dumps(pack)
                     self.send_mes_all(new_pack)
 
